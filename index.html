@@ -17,32 +17,22 @@
 	  				<div>
 	  					<img src="img/apps_mall_logo.png"></img>
 	  				</div>
-	  				<div>
+	  				<div style="margin: 10px;">
 	  					<form class="form-search">
-	  						<input autofocus type="text" class="input-large">
+	  						<input autofocus type="text" class="input-large" style="width: 95%;">
 						</form>
 					</div>
 					<div class="margins">
-						<ul class="unstyled">
-							<li>My Apps</li>
-							<li>Popular</li>
-							<li>Related</li>
-							<li>Groups</li>
-							<li>Organizations</li>
-							<hr>
-							<li>Analysis</li>
-							<li>Business</li>
-							<hr>
-							<li>Preferences</li>
-							<li>Development</li>
-							<li>Administration</li>
-						</ul>
+						<ul id="groupings"></ul>
+						<hr>
+						<ul id="categories"></ul>
+						<hr>
+						<ul id="auxillary"></ul>
 					</div>
 	  			</div>
 	  			<div class="span8 main-panel bottomless-border fullheight">
 		  			<div class="border">
-			  			<span>Look for...</span>
-			  			<span>
+			  			<span style="margin: 5px 0px 0px 5px;">Look for...</span>
 				  			<select>
 								<option value="mine">My Apps</option>
 								<option value="rating">Highest Rated</option>
@@ -66,6 +56,31 @@
 		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 		<script src="lib/bootstrap/js/bootstrap.min.js"></script>
 		<script src="lib/responsiveslides/responsiveslides.min.js"></script>
-		<script src="js/aml.js"></script>
+		
+		<script src="lib/underscore/underscore-min.js"></script>
+		<script src="lib/backbone/backbone-min.js"></script>
+		<script src="lib/handlebars/handlebars.js"></script>
+
+		<script src="js/AppsMall.js"></script>
+		
+		<script src="js/models/App.js"></script>
+		<script src="js/collections/App.js"></script>
+		<script src="js/views/App.js"></script>
+		
+		<script src="js/models/Category.js"></script>
+		<script src="js/collections/Category.js"></script>
+		<script src="js/views/Category.js"></script>
+		
+		<script src="js/models/Grouping.js"></script>
+		<script src="js/collections/Grouping.js"></script>
+		<script src="js/views/Grouping.js"></script>
+		
+		<script id="grouping-template" type="text/x-handlebars-template">
+  			<li><a class="nolink" href="{{url}}">{{grouping}}</li>
+		</script>
+		
+		<script id="category-template" type="text/x-handlebars-template">
+  			<li><a class="nolink" href="{{url}}">{{category}}</li>
+		</script>
 	</body>
 </html>
