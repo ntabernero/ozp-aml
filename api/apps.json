@@ -1,0 +1,40 @@
+[{
+	"name":"Map View",
+	"version":1.3,
+	"lifecycleState":"prod",
+	"accessible":false,
+	"users":21031,
+	"ratings":3012,
+	"rating":3.5,
+	"description":"This is a geospatial view to allow for seeing map data and using it.",
+	"url":"aml/apps/1",
+	"organization":"Personal",
+	"largePhoto":"/aml/img/mapViewLarge.png",
+	"smallPhoto":"/aml/img/mapViewSmall.png"
+},{
+	"name":"Data Grid",
+	"version":0.7,
+	"lifecycleState":"beta",
+	"accessible":true,
+	"users":102,
+	"ratings":35,
+	"rating":2.0,
+	"description":"Shows data in a grid.",
+	"url":"aml/apps/2",
+	"organization":"Industry",
+	"largePhoto":"/aml/img/dataGridLarge.png",
+	"smallPhoto":"/aml/img/dataGridSmall.png"
+},{
+	"name":"GoAmerica",
+	"version":0.1,
+	"lifecycleState":"alpha",
+	"accessible":true,
+	"users":31,
+	"ratings":2,
+	"rating":1.0,
+	"description":"Shows an eagle flying around.",
+	"url":"aml/apps/3",
+	"organization":"Personal",
+	"largePhoto":"/aml/img/goAmericaLarge.png",
+	"smallPhoto":"/aml/img/goAmericaSmall.png"
+}]

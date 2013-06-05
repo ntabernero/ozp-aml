@@ -1,0 +1,16 @@
+[{
+	"grouping":"My Apps",
+	"url":"/aml/myapps/"
+},{
+	"grouping":"Popular",
+	"url":"/aml/popular/"
+},{
+	"grouping":"Related",
+	"url":"/aml/related/"
+},{
+	"grouping":"Groups",
+	"url":"/aml/groups/"
+},{
+	"grouping":"Organizations",
+	"url":"/aml/organizations/"
+}]
