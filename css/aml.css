@@ -38,36 +38,37 @@ html, body {
 }
 
 .rslides {
-  position: relative;
-  list-style: none;
-  overflow: hidden;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  }
+	position: relative;
+	list-style: none;
+	overflow: hidden;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
 
 .rslides li {
-  -webkit-backface-visibility: hidden;
-  position: absolute;
-  display: none;
-  width: 100%;
-  left: 0;
-  top: 0;
-  }
+	-webkit-backface-visibility: hidden;
+	position: absolute;
+	display: none;
+	width: 100%;
+	left: 0;
+	top: 0;
+}
 
 .rslides li:first-child {
-  position: relative;
-  display: block;
-  float: left;
-  }
+	position: relative;
+	display: block;
+	float: left;
+}
 
 .rslides img {
-  display: block;
-  height: auto;
-  float: left;
-  width: 100%;
-  border: 0;
-  }
+	display: block;
+	height: auto;
+	float: left;
+	width: 100%;
+	border: 0;
+}
+
 hr {
     height: 2px;
     border: 0;
@@ -95,7 +96,6 @@ hr {
      margin-left: 150px;  /* must match the fixed width in the .fixed class */
      overflow: hidden;
 }
-
 
 /* CSS to ensure sidebar and content are same height (optional) */
 
