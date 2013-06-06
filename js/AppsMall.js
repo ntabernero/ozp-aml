@@ -1,10 +1,17 @@
+// Define window level global.
 window.AppsMall = {
 	Models: {},
 	Collections: {},
 	Views: {}
 };
 
+// Alias '_id' to 'id' in Backbone.
+Backbone.Model.prototype.idAttribute = "_id";
+
+// Kickstart renderer components on 'ready'.
 $(document).ready(function(){
+	
+	// Set up Responsive Slides.
 	$(".rslides").responsiveSlides({
 		nav: true,
 		auto: true,
@@ -13,6 +20,7 @@ $(document).ready(function(){
 		namespace: "centered-btns"
 	});
 	
+	// Create a new grouping collection and render templates.
 	var groupingCollection = new AppsMall.Collections.Grouping();
 	groupingCollection.fetch({
 		complete: function () {
@@ -23,6 +31,7 @@ $(document).ready(function(){
 		}
 	});
 	
+	// Create a new category collection and render templates.	
 	var categoryCollection = new AppsMall.Collections.Category();
 	categoryCollection.fetch({
 		complete: function () {
@@ -33,8 +42,9 @@ $(document).ready(function(){
 		}
 	});
 
+	// Assign panel heights [temp code, find CSS solution]
 	//$(".fullheight").height($(document).height() - 2);
 	$(window).resize(function(){
         //$(".fullheight").height($(document).height() - 2);
     });
-}); 
+});
