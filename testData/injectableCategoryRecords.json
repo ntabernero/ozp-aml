@@ -1,0 +1,23 @@
+{
+    "injectableRecords": [{
+    	"category":"Analytics",
+    	"url":"/aml/myapps/",
+    	"access":"NONE"
+    },{
+    	"category":"Business",
+    	"url":"/aml/popular/",
+    	"access":"NONE"
+    },{
+    	"category":"Training",
+    	"url":"/aml/related/",
+    	"access":"NONE"
+    },{
+    	"category":"Collaboration",
+    	"url":"/aml/groups/",
+    	"access":"NONE"
+    },{
+    	"category":"Games",
+    	"url":"/aml/games/",
+    	"access":"NONE"
+    }]
+}

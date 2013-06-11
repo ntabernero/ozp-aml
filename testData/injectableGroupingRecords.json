@@ -1,0 +1,23 @@
+{
+    "injectableRecords": [{
+    	"grouping":"My Apps",
+    	"url":"/aml/myapps/",
+        "access":"NONE"
+    },{
+    	"grouping":"Popular",
+    	"url":"/aml/popular/",
+        "access":"NONE"
+    },{
+    	"grouping":"Related",
+    	"url":"/aml/related/",
+        "access":"NONE"
+    },{
+    	"grouping":"Groups",
+    	"url":"/aml/groups/",
+        "access":"NONE"
+    },{
+    	"grouping":"Organizations",
+    	"url":"/aml/organizations/",
+        "access":"NONE"
+    }]
+}
