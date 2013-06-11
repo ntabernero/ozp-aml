@@ -1,39 +1,50 @@
+// Function Bind prototype method.
+require('./Bind')
+
 // Include Express library.
 var express = require('express');
+var mongo = require('mongodb');
+
+// API URL and version.
+var url = '/aml/api/', version = 1;
+
+// Create and connect to MongoDB database.
+var Server = mongo.Server, Db = mongo.Db;
+var server = new Server('localhost', 27017, {auto_reconnect: true});
+db = new Db('appsmall', server, {journal: true});
+
+// Kick start RESTful controller factory for collection-based routes.
+var RestControllerFactory = require('./RestControllerFactory');
 
 // Define route modules.
-var app = express(),
-	appRoutes = require('./routes/App'),
-	categoryRoutes = require('./routes/Category'),
-	groupingRoutes = require('./routes/Grouping');
+var app = express();
 
-// Extensive logging.
+//Extensive logging.
 app.configure(function () {
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
 });
 
-// Application route controller.
-app.get('/aml/api/v1/app/', appRoutes.findAll);
-app.get('/aml/api/v1/app/:id', appRoutes.findById);
-app.post('/aml/api/v1/app/', appRoutes.add);
-app.put('/aml/api/v1/app/:id', appRoutes.update);
-app.delete('/aml/api/v1/app/:id', appRoutes.delete);
+// Assign routes and a route handler object.
+var routes = ['app', 'category', 'grouping'], routeHandlers = {}, idUrl = url + 'v' + version + '/';
 
-//Grouping route controller.
-app.get('/aml/api/v1/grouping/', groupingRoutes.findAll);
-app.get('/aml/api/v1/grouping/:id', groupingRoutes.findById);
-app.post('/aml/api/v1/grouping/', groupingRoutes.add);
-app.put('/aml/api/v1/grouping/:id', groupingRoutes.update);
-app.delete('/aml/api/v1/grouping/:id', groupingRoutes.delete);
+// Open the database.
+db.open(function (error) {
+	for (var i = 0; i < routes.length; i++) {
+		// Assign the route handler object.
+		routeHandlers[routes[i]] = new RestControllerFactory(routes[i], db, idUrl, true);
+		
+		var scope = routeHandlers[routes[i]];
+		
+		// Assign HTTP methods to route object methods.
+		app.get(url + 'v' + version + '/'		+ routes[i] + '/',		routeHandlers[routes[i]].findAll.bind(scope));
+		app.get(url + 'v' + version + '/'		+ routes[i] + '/:id',	routeHandlers[routes[i]].findById.bind(scope));
+		app.post(url + 'v' + version + '/'		+ routes[i] + '/',		routeHandlers[routes[i]].add.bind(scope));
+		app.put(url + 'v' + version + '/'		+ routes[i] + '/:id',	routeHandlers[routes[i]].update.bind(scope));
+		app.delete(url + 'v' + version + '/'	+ routes[i] + '/:id',	routeHandlers[routes[i]].remove.bind(scope));
+	}
+});
 
-//Category route controller.
-app.get('/aml/api/v1/category/', categoryRoutes.findAll);
-app.get('/aml/api/v1/category/:id', categoryRoutes.findById);
-app.post('/aml/api/v1/category/', categoryRoutes.add);
-app.put('/aml/api/v1/category/:id', categoryRoutes.update);
-app.delete('/aml/api/v1/category/:id', categoryRoutes.delete);
-
-// Kickstart REST controller process.
+// Kick start REST controller process.
 app.listen(3000);
 console.log('AML Node.js API on port 3000.');
