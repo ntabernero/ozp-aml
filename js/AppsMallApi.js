@@ -37,11 +37,11 @@ db.open(function (error) {
 		var scope = routeHandlers[routes[i]];
 		
 		// Assign HTTP methods to route object methods.
-		app.get(url + 'v' + version + '/'		+ routes[i] + '/',		routeHandlers[routes[i]].findAll.bind(scope));
-		app.get(url + 'v' + version + '/'		+ routes[i] + '/:id',	routeHandlers[routes[i]].findById.bind(scope));
-		app.post(url + 'v' + version + '/'		+ routes[i] + '/',		routeHandlers[routes[i]].add.bind(scope));
-		app.put(url + 'v' + version + '/'		+ routes[i] + '/:id',	routeHandlers[routes[i]].update.bind(scope));
-		app.delete(url + 'v' + version + '/'	+ routes[i] + '/:id',	routeHandlers[routes[i]].remove.bind(scope));
+		app.get(idUrl		+ routes[i] + '/',		routeHandlers[routes[i]].findAll.bind(scope));
+		app.get(idUrl		+ routes[i] + '/:id',	routeHandlers[routes[i]].findById.bind(scope));
+		app.post(idUrl		+ routes[i] + '/',		routeHandlers[routes[i]].add.bind(scope));
+		app.put(idUrl		+ routes[i] + '/:id',	routeHandlers[routes[i]].update.bind(scope));
+		app.delete(idUrl	+ routes[i] + '/:id',	routeHandlers[routes[i]].remove.bind(scope));
 	}
 });
 
