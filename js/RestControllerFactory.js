@@ -9,6 +9,7 @@ var BSON = mongo.BSONPure;
  * @class RestControllerFactory
  * @constructor
  */
+
 var RestControllerFactory = function(collectionName, database, recordUrl, logging) {
 	// Persist REST/collection options inside new object.
 	this.url = recordUrl;
@@ -38,6 +39,7 @@ RestControllerFactory.prototype = {
  * @method openCollection
  * @param {Object} error MongoDB driver error object
  */
+
 RestControllerFactory.prototype.openCollection = function () {
 	console.log('RestControllerFactory::openCollection--> Opening collection \'' + this.collectionName + '\'');
 	this.database.collection(this.collectionName, {
@@ -52,6 +54,7 @@ RestControllerFactory.prototype.openCollection = function () {
  * @param {Object} error 		MongoDB driver error object
  * @param {Object} collection	MongoDB driver collection object
  */
+
 RestControllerFactory.prototype.scanCollection = function (error, collection) {
 	console.log('RestControllerFactory::openCollection--> Scanning collection \'' + this.collectionName + '\'');
 	this.collection = collection;
@@ -77,6 +80,7 @@ RestControllerFactory.prototype.scanCollection = function (error, collection) {
  * @method assignRouteMethods
  * @return {Object} All CRUD RESTful route bindings
  */
+
 RestControllerFactory.prototype.assignRouteMethods = function () {
 	console.log('RestControllerFactory::assignRouteMethods--> Returning RESTful method object for \'' + this.collectionName + '\'');
 	return {
@@ -93,6 +97,7 @@ RestControllerFactory.prototype.assignRouteMethods = function () {
  * 
  * @method populateCollection
  */
+
 RestControllerFactory.prototype.populateCollection = function () {
 	console.log('RestControllerFactory::populateCollection --> Injecting stub data for  \'' + this.collectionName + '\'');
 	try {
@@ -113,6 +118,7 @@ RestControllerFactory.prototype.populateCollection = function () {
  * @private
  * @param {String} string String to be capitalized
  */
+
 RestControllerFactory.prototype._capitalizeFirstLetter = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
@@ -125,6 +131,7 @@ RestControllerFactory.prototype._capitalizeFirstLetter = function (string) {
  * @param {Array} records An array of record objects
  * @return {Array} An injected array of record objects
  */
+
 RestControllerFactory.prototype._injectRecordUrls = function (records) {
 	var i, injectedRecords = [];
 	for (i = 0; i < records.length; i++) {
@@ -142,6 +149,7 @@ RestControllerFactory.prototype._injectRecordUrls = function (records) {
  * @param {Object} queryParameters Express request body object with query parameters
  * @return {Object} Attached functions to handle query parameters
  */
+
 RestControllerFactory.prototype.parseQueryParameters = function (queryParameters) {
 	var key, fnType, fns = {};
 	for (key in queryParameters) {
@@ -162,6 +170,7 @@ RestControllerFactory.prototype.parseQueryParameters = function (queryParameters
  * @param {Object} req Express request object
  * @param {Object} res Express results object
  */
+
 RestControllerFactory.prototype.findAll = function (req, res) {
 	var queryFns = this.parseQueryParameters(req.query);
 	var _injectRecordUrls = this._injectRecordUrls.bind(this);
