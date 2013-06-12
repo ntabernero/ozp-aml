@@ -10,13 +10,13 @@ var BSON = mongo.BSONPure;
  * @constructor
  */
 
-var RestControllerFactory = function(collectionName, database, recordUrl, logging) {
+var RestControllerFactory = function(collectionName, database, recordUrl, debugging) {
 	// Persist REST/collection options inside new object.
 	this.url = recordUrl;
-	this.logging = logging;
+	this.debugging = debugging;
 	this.database = database;
 	this.collectionName = collectionName;
-	console.log('RestControllerFactory::Constructor -->(\'', this.collectionName, '\',\'', this.database.databaseName, '\')');
+	if (this.debugging) console.log('RestControllerFactory::Constructor -->(\'', this.collectionName, '\',\'', this.database.databaseName, '\')');
 	this.openCollection.bind(this)();
 };
 
@@ -25,7 +25,7 @@ RestControllerFactory.prototype = {
 	database: null,
 	collection: null,
 	url: null,
-	logging: null,
+	debugging: null,
 	fns: {
 		query: {},
 		metadata: {},
@@ -41,7 +41,7 @@ RestControllerFactory.prototype = {
  */
 
 RestControllerFactory.prototype.openCollection = function () {
-	console.log('RestControllerFactory::openCollection--> Opening collection \'' + this.collectionName + '\'');
+	if (this.debugging) console.log('RestControllerFactory::openCollection--> Opening collection \'' + this.collectionName + '\'');
 	this.database.collection(this.collectionName, {
 		strict: true
 	}, this.scanCollection.bind(this));
@@ -56,18 +56,18 @@ RestControllerFactory.prototype.openCollection = function () {
  */
 
 RestControllerFactory.prototype.scanCollection = function (error, collection) {
-	console.log('RestControllerFactory::openCollection--> Scanning collection \'' + this.collectionName + '\'');
+	if (this.debugging) console.log('RestControllerFactory::openCollection--> Scanning collection \'' + this.collectionName + '\'');
 	this.collection = collection;
 	try {
 		if (error) {
 			this.populateCollection.bind(this)();
 		}
 		else {
-			console.log('RestControllerFactory::openCollection--> Collection \'' + this.collectionName + '\' exists and contains data');
+			if (this.debugging) console.log('RestControllerFactory::openCollection--> Collection \'' + this.collectionName + '\' exists and contains data');
 		}
 	}
 	catch (exception) {
-		console.log('RestControllerFactory::openCollection--> Cannot populate collection with stub data: ' + exception);
+		if (this.debugging) console.log('RestControllerFactory::openCollection--> Cannot populate collection with stub data: ' + exception);
 	}
 	finally {
 		this.assignRouteMethods.bind(this)();
@@ -82,7 +82,7 @@ RestControllerFactory.prototype.scanCollection = function (error, collection) {
  */
 
 RestControllerFactory.prototype.assignRouteMethods = function () {
-	console.log('RestControllerFactory::assignRouteMethods--> Returning RESTful method object for \'' + this.collectionName + '\'');
+	if (this.debugging) console.log('RestControllerFactory::assignRouteMethods--> Returning RESTful method object for \'' + this.collectionName + '\'');
 	return {
 		add:		this.add.bind(this),
 		update:		this.update.bind(this),
@@ -99,15 +99,15 @@ RestControllerFactory.prototype.assignRouteMethods = function () {
  */
 
 RestControllerFactory.prototype.populateCollection = function () {
-	console.log('RestControllerFactory::populateCollection --> Injecting stub data for  \'' + this.collectionName + '\'');
+	if (this.debugging) console.log('RestControllerFactory::populateCollection --> Injecting stub data for  \'' + this.collectionName + '\'');
 	try {
 		var injectionJson = require('../testData/injectable' + this._capitalizeFirstLetter(this.collectionName) + 'Records.json');
 		this.database.collection(this.collectionName, function(err, collection) {
-	        collection.insert(injectionJson, {safe:true}, function(err, result) {});
+	        collection.insert(injectionJson.injectableRecords, {safe:true}, function(err, result) {});
 	    });
 	}
 	catch (exception) {
-		throw "Unable to load injection data for collection: " + exception;
+		if (this.debugging) throw "Unable to load injection data for collection: " + exception;
 	}
 };
 
@@ -143,27 +143,6 @@ RestControllerFactory.prototype._injectRecordUrls = function (records) {
 };
 
 /**
- * Parses query parameters from a HTTP(s) request body.
- * 
- * @method parseQueryParameters
- * @param {Object} queryParameters Express request body object with query parameters
- * @return {Object} Attached functions to handle query parameters
- */
-
-RestControllerFactory.prototype.parseQueryParameters = function (queryParameters) {
-	var key, fnType, fns = {};
-	for (key in queryParameters) {
-		for (fnType in this.fns) {
-			if (typeof this.fns[fnType][key] === 'function') {
-				fns[fnType] = [];
-				fns[fnType].push(this.fns[fnType][key].bind(this));
-			}
-		}
-	}
-	return fns;
-};
-
-/**
  * 'Find All' MongoDB collection 'read' method, CORS enabled.
  * 
  * @method findAll
@@ -172,7 +151,6 @@ RestControllerFactory.prototype.parseQueryParameters = function (queryParameters
  */
 
 RestControllerFactory.prototype.findAll = function (req, res) {
-	var queryFns = this.parseQueryParameters(req.query);
 	var _injectRecordUrls = this._injectRecordUrls.bind(this);
     this.database.collection(this.collectionName, function(err, collection) {       
     	collection.find().toArray(function(err, items) {
@@ -193,7 +171,6 @@ RestControllerFactory.prototype.findAll = function (req, res) {
 
 RestControllerFactory.prototype.findById = function(req, res) {
     var id = req.params.id;
-	var query = this.parseQueryParameters(req.query);
 	var _injectRecordUrls = this._injectRecordUrls.bind(this);
 	
     this.database.collection(this.collectionName, function(err, collection) {
@@ -244,7 +221,7 @@ RestControllerFactory.prototype.update = function(req, res) {
     this.database.collection(this.collectionName, function(err, collection) {
         collection.update({'_id':new BSON.ObjectID(id)}, item, {safe:true}, function(err, result) {
             if (err) {
-                console.log('Error updating ' + this.collectionName + ': ' + err);
+            	if (this.debugging) console.log('Error updating ' + this.collectionName + ': ' + err);
             	res.header("Access-Control-Allow-Origin", "*"); // CORS header, blanket white list.
                 res.send({'error':'An error has occurred'});
             }
