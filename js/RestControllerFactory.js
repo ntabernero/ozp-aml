@@ -1,6 +1,7 @@
 // MongoDB and BSON driver support.
 var mongo = require('mongodb');
 var BSON = mongo.BSONPure;
+var TimingCollector = require('./TimingCollector');
 
 /**
  * Creates a RESTful controller specific to a MongoDB database and collection
@@ -10,13 +11,23 @@ var BSON = mongo.BSONPure;
  * @constructor
  */
 
-var RestControllerFactory = function(collectionName, database, recordUrl, debugging) {
+var RestControllerFactory = function(collectionName, database, recordUrl, debugging, mixins) {
 	// Persist REST/collection options inside new object.
 	this.url = recordUrl;
 	this.debugging = debugging;
 	this.database = database;
 	this.collectionName = collectionName;
-	if (this.debugging) console.log('RestControllerFactory::Constructor -->(\'', this.collectionName, '\',\'', this.database.databaseName, '\')');
+	this.timing = new TimingCollector();
+	
+	if (typeof mixins === 'object') {
+		for (var mixin in mixins) {
+			if (mixins.hasOwnProperty(mixin)) {
+				this[mixin] = mixins[mixin];
+			}
+		}
+	}
+	
+	if (this.debugging) console.log('RestControllerFactory::Constructor --> (\'', this.collectionName, '\',\'', this.database.databaseName, '\')');
 	this.openCollection.bind(this)();
 };
 
@@ -26,11 +37,7 @@ RestControllerFactory.prototype = {
 	collection: null,
 	url: null,
 	debugging: null,
-	fns: {
-		query: {},
-		metadata: {},
-		performance: {}
-	}
+	timing: null
 };
 
 /**
@@ -142,6 +149,15 @@ RestControllerFactory.prototype._injectRecordUrls = function (records) {
 	return injectedRecords;
 };
 
+RestControllerFactory.prototype._mergeObjects = function () {
+	var o = {};
+	for (var i = arguments.length - 1; i >= 0; i --) {
+		var s = arguments[i];
+		for (var k in s) o[k] = s[k];
+	}
+	return o;
+};
+
 /**
  * 'Find All' MongoDB collection 'read' method, CORS enabled.
  * 
@@ -151,10 +167,62 @@ RestControllerFactory.prototype._injectRecordUrls = function (records) {
  */
 
 RestControllerFactory.prototype.findAll = function (req, res) {
+	var operations = this.queryProcessor.parseRestParameters(req, res);
 	var _injectRecordUrls = this._injectRecordUrls.bind(this);
-    this.database.collection(this.collectionName, function(err, collection) {       
-    	collection.find().toArray(function(err, items) {
-        	var responseObject = {records: _injectRecordUrls(items)};
+	var _mergeObjects = this._mergeObjects.bind(this);
+	var timing = this.timing, timingRecords;
+	
+	// Embedded timing parameter check.
+	if (req.query.hasOwnProperty('request_timing')) {
+		if (req.query.request_timing.toLowerCase() === 'true') {
+			timing.start();
+		}
+	}
+	
+	// Scan the collection.
+    this.database.collection(this.collectionName, function(err, collection) {
+    	// Hijack the chained MongoDB operator method.
+    	var mongoOp = collection, initialFind = false;
+    	
+    	// Include every query operator as a chained method.
+    	for (var i = 0; i < operations.query.length; i++) {
+    		if (operations.query[i].operation === 'find') {
+    			var chainedOperator = operations.query[i];
+        		mongoOp = mongoOp[chainedOperator.operation](chainedOperator.parameters);
+    			operations.query.splice(i, 1);
+    			initialFind = true;
+    		}
+    	}
+    	
+    	// Spawn an initial 'find()' if one was not specified in the processors.
+    	if (!initialFind) mongoOp = mongoOp.find();
+    	
+    	// Include every query operator as a chained method.
+    	for (var i = 0; i < operations.query.length; i++) {
+    		var chainedOperator = operations.query[i];
+    		mongoOp = mongoOp[chainedOperator.operation](chainedOperator.parameters);
+    	}
+    	
+    	// Once chained methods are complete, return as an array of items.
+    	mongoOp.toArray(function(err, items) {
+    		// Embedded timing parameter check.
+    		if (req.query.hasOwnProperty('request_timing')) {
+    			if (req.query.request_timing.toLowerCase() === 'true') {
+    				timingRecords = timing.stop(req);
+    			}
+    		}
+    		// Inject the record URLs for linking.
+        	var responseObject = {count: items.length, records: _injectRecordUrls(items)};
+        	if (operations.metadata.length > 0) {
+        		for (var i = 0; i < operations.metadata.length; i++) {
+        			responseObject = _mergeObjects(responseObject, operations.metadata[i]);
+        		}
+        	}
+        	if (req.query.hasOwnProperty('request_timing')) {
+    			if (req.query.request_timing.toLowerCase() === 'true') {
+    				responseObject = _mergeObjects(responseObject, {requestTiming: timingRecords});
+    			}
+    		}
         	res.header("Access-Control-Allow-Origin", "*"); // CORS header, blanket white list.
         	res.send(responseObject);
         });
@@ -214,14 +282,13 @@ RestControllerFactory.prototype.add = function(req, res) {
  */
 
 RestControllerFactory.prototype.update = function(req, res) {
-    var id = req.params.id;
-    var item = req.body;
-    console.log('Updating ' + this.collectionName + ': ' + id);
+    var id = req.params.id, item = req.body, debugging = this.debugging;
+    if (this.debugging) console.log('Updating ' + this.collectionName + ': ' + id);
     console.log(JSON.stringify(item));
     this.database.collection(this.collectionName, function(err, collection) {
         collection.update({'_id':new BSON.ObjectID(id)}, item, {safe:true}, function(err, result) {
             if (err) {
-            	if (this.debugging) console.log('Error updating ' + this.collectionName + ': ' + err);
+            	if (debugging) console.log('Error updating ' + this.collectionName + ': ' + err);
             	res.header("Access-Control-Allow-Origin", "*"); // CORS header, blanket white list.
                 res.send({'error':'An error has occurred'});
             }
