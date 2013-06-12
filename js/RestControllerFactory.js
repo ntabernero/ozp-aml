@@ -293,7 +293,7 @@ RestControllerFactory.prototype.update = function(req, res) {
                 res.send({'error':'An error has occurred'});
             }
             else {
-                res.send(app);
+                res.send(result[0]);
             }
         });
     });	
