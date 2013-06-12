@@ -1,5 +1,7 @@
 // Function Bind prototype method.
 require('./Bind')
+var QueryParameterProcessor = require('./QueryParameterProcessor');
+var MetricsCollector = require('./MetricsCollector');
 
 // Include Express library.
 var express = require('express');
@@ -26,16 +28,18 @@ app.configure(function () {
 });
 
 // Assign routes and a route handler object.
-var routes = ['app', 'category', 'grouping'], routeHandlers = {}, idUrl = url + 'v' + version + '/';
+var routes = ['app', 'category', 'grouping', 'metrics'], routeHandlers = {}, idUrl = url + 'v' + version + '/';
 
 // Open the database.
 db.open(function (error) {
 	for (var i = 0; i < routes.length; i++) {
 		// Assign the route handler object.
-		routeHandlers[routes[i]] = new RestControllerFactory(routes[i], db, idUrl, true);
+		routeHandlers[routes[i]] = new RestControllerFactory(routes[i], db, idUrl, true, {
+			metricsCollector: new MetricsCollector(db),
+			queryProcessor: new QueryParameterProcessor(true)
+		});
 		
 		var scope = routeHandlers[routes[i]];
-		
 		// Assign HTTP methods to route object methods.
 		app.get(idUrl		+ routes[i] + '/',		routeHandlers[routes[i]].findAll.bind(scope));
 		app.get(idUrl		+ routes[i] + '/:id',	routeHandlers[routes[i]].findById.bind(scope));
