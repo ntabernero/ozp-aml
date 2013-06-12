@@ -4,7 +4,7 @@
  * @class MetricsCollector
  * @constructor
  */
-var MetricsCollector = function(db, url) {
+var MetricsCollector = function(db) {
     // Records buffer logs in batches
     this.buffer = [];
     this.metrics = db;
@@ -16,6 +16,15 @@ MetricsCollector.prototype = {
     max: 4
 };
 
+MetricsCollector.prototype._mergeObjects = function () {
+	var o = {};
+	for (var i = arguments.length - 1; i >= 0; i --) {
+		var s = arguments[i];
+		for (var k in s) o[k] = s[k];
+	}
+	return o;
+};
+
 /**
  * Collect metrics using Express' request object and additional input.
  * 
@@ -23,7 +32,7 @@ MetricsCollector.prototype = {
  * @param {Object} req Express request object
  * @param {Object} input Additional input to collect
  */
-MetricsCollector.prototype.put = function(req, input) {
+MetricsCollector.prototype.put = function(req, metricsParameters) {
     
     // Create the record
     var record = {
@@ -32,11 +41,13 @@ MetricsCollector.prototype.put = function(req, input) {
         query: req.query 
     };
     
+    var resultsObject = this._mergeObjects(record, metricsParameters);
+    
     // If too long clean half of the buffer
     if (this.buffer.length === 4) {
         this._cleanBuffer();
     }
-    this.buffer.unshift(record);
+    this.buffer.unshift(resultsObject);
 };
 
 /**
