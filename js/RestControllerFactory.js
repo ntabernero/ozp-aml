@@ -171,13 +171,10 @@ RestControllerFactory.prototype.findAll = function (req, res) {
 	var _injectRecordUrls = this._injectRecordUrls.bind(this);
 	var _mergeObjects = this._mergeObjects.bind(this);
 	var timing = this.timing, timingRecords;
-	
+	var metricsCollector = this.metricsCollector;
+
 	// Embedded timing parameter check.
-	if (req.query.hasOwnProperty('request_timing')) {
-		if (req.query.request_timing.toLowerCase() === 'true') {
-			timing.start();
-		}
-	}
+	timing.start();
 	
 	// Scan the collection.
     this.database.collection(this.collectionName, function(err, collection) {
@@ -206,11 +203,9 @@ RestControllerFactory.prototype.findAll = function (req, res) {
     	// Once chained methods are complete, return as an array of items.
     	mongoOp.toArray(function(err, items) {
     		// Embedded timing parameter check.
-    		if (req.query.hasOwnProperty('request_timing')) {
-    			if (req.query.request_timing.toLowerCase() === 'true') {
-    				timingRecords = timing.stop(req);
-    			}
-    		}
+  			timingRecords = timing.stop(req);
+			metricsCollector.put(req, timingRecords);
+
     		// Inject the record URLs for linking.
         	var responseObject = {count: items.length, records: _injectRecordUrls(items)};
         	if (operations.metadata.length > 0) {
