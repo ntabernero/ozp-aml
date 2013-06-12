@@ -17,6 +17,7 @@ var QueryParameterProcessor = function(debugging) {
 		performance: []
 	};
 	
+	// Scan file system for parameter processors.
 	if (this.debugging) console.log('QueryParameterProcessor::Constructor --> Scanning folder for processors: ' + __dirname);
 	fs.readdirSync(__dirname + '/processors/').forEach(function(folder) {
 		fs.readdirSync(__dirname + '/processors/' + folder).forEach(function(file) {
@@ -29,8 +30,6 @@ var QueryParameterProcessor = function(debugging) {
 			processors[folder].push(obj);
 		});
 	});
-	
-	this.processors = processors;
 };
 
 QueryParameterProcessor.prototype = {
@@ -42,52 +41,55 @@ QueryParameterProcessor.prototype = {
 	}
 };
 
+/**
+ * Parses RESTful parameters from the body and attaches handlers for metadata
+ * and database query request to be injected into the master response.
+ * 
+ * @method parseRestParameters
+ * @param {Object} req Express request object
+ * @param {Object} res Express response object
+ * @return {Object} Processor output for response integration
+ */
+
 QueryParameterProcessor.prototype.parseRestParameters = function (req, res) {
-	var i, j, toProcess = {
+	// Set up variables.
+	var i, j, 
+	categories = Object.keys(this.processors),
+	toProcess = {
 		query: [],
 		metadata: []
 	};
-
-	// Execute all query processors.
-	for (i = 0; i < this.processors.query.length; i++) {
-		var operations = [];
-		var processorName = Object.keys(this.processors.query[i])[0] 
-		var processorQueryFields = this.processors.query[i][processorName].getQueryFields();
-		
-		for (var restfulParameter in req.query) {
-			for (j = 0; j < processorQueryFields.length; j++) {
-				if (restfulParameter === processorQueryFields[j]) {
-					var newOperation = {};
-					newOperation[restfulParameter] = req.query[restfulParameter];
-					operations.push(newOperation);
-				}
-			}
-		}
-		if (operations.length > 0) {
-			toProcess.query.push(this.processors.query[i][processorName].run(operations));
-		}
-	}
 	
-	// Execute all metadata processors.
-	for (i = 0; i < this.processors.metadata.length; i++) {
-		var operations = [];
-		var processorName = Object.keys(this.processors.metadata[i])[0] 
-		var processorQueryFields = this.processors.metadata[i][processorName].getQueryFields();
-		
-		for (var restfulParameter in req.query) {
-			for (j = 0; j < processorQueryFields.length; j++) {
-				if (restfulParameter === processorQueryFields[j]) {
-					if (req.query[restfulParameter] === 'true') {
+	// Scan each processor category.
+	for (var index = 0; index < categories.length; index++) {
+		var category = categories[index];
+		// Execute all query processors.
+		for (i = 0; i < this.processors[category].length; i++) {
+			var operations = [];
+			
+			// Extract the keys/processor names from the storage object. These
+			// are set by the file loader.
+			var processorName = Object.keys(this.processors[category][i])[0];
+			
+			// For each query processor, get the query fields relevant to the RESTful service.
+			var processorQueryFields = this.processors[category][i][processorName].getQueryFields();
+			
+			// For each defined RESTful parameter...
+			for (var restfulParameter in req.query) {
+				// ... scan from the file loader options...
+				for (j = 0; j < processorQueryFields.length; j++) {
+					// And match the request parameter to the handler.
+					if (restfulParameter === processorQueryFields[j]) {
 						var newOperation = {};
 						newOperation[restfulParameter] = req.query[restfulParameter];
 						operations.push(newOperation);
 					}
 				}
 			}
-		}
-		
-		if (operations.length > 0) {
-			toProcess.metadata.push(this.processors.metadata[i][processorName].run(req, res));
+			// If operations matched request parameters, push an operator.
+			if (operations.length > 0) {
+				toProcess[category].push(this.processors[category][i][processorName].run(req, res));
+			}
 		}
 	}
 	
