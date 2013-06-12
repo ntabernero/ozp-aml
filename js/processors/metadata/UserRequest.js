@@ -1,8 +1,25 @@
+/**
+ * UserRequest constructor.
+ * 
+ * @class UserRequest
+ * @module Processors
+ * @constructor
+ */
 var UserRequest = function() {}
 
 UserRequest.prototype = {
 	debugging: false
 };
+
+/**
+ * Default execution method for processors.
+ * 
+ * Attaches relevant metadata from the user's request to the RESTful service.
+ * 
+ * @method run
+ * @param {Array} queryParameters List of relevant query parameters from the RESTful request
+ * @return {Object} Object describing MongoDB operation and parameters for the method
+ */
 
 UserRequest.prototype.run = function (req, res) {
 	return {
@@ -21,9 +38,23 @@ UserRequest.prototype.run = function (req, res) {
 	};
 };
 
+/**
+ * RESTful parameter fields relevant to the processor.
+ * 
+ * @method getQueryFields
+ * return {Array} List of relevant parameters
+ */
+
 UserRequest.prototype.getQueryFields = function () {
 	return ['request_info'];
 };
+
+/**
+ * RESTful parameter field descriptions.
+ * 
+ * @method queryFieldParameters
+ * @return {Array} List of relevant field descriptions for the processor
+ */
 
 UserRequest.prototype.queryFieldParameters = function () {
 	return [{
