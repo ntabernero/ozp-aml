@@ -1,8 +1,27 @@
+/**
+ * Sort constructor.
+ * 
+ * @class Sort
+ * @module Processors
+ * @constructor
+ */
+
 var Sort = function() {}
 
 Sort.prototype = {
 	debugging: false
 };
+
+/**
+ * Default execution method for processors.
+ * 
+ * Assigns a sort direction and sort by column logic when
+ * parameters are passed through the RESTful service.
+ * 
+ * @method run
+ * @param {Array} queryParameters List of relevant query parameters from the RESTful request
+ * @return {Object} Object describing MongoDB operation and parameters for the method
+ */
 
 Sort.prototype.run = function (queryParameters) {
 	var i, j, k, obj, key, sortDir, sortFields = {}, sortObj = {};
@@ -50,9 +69,23 @@ Sort.prototype.run = function (queryParameters) {
 	};
 };
 
+/**
+ * RESTful parameter fields relevant to the processor.
+ * 
+ * @method getQueryFields
+ * return {Array} List of relevant parameters
+ */
+
 Sort.prototype.getQueryFields = function () {
 	return ['sort_by', 'sort_dir'];
 };
+
+/**
+ * RESTful parameter field descriptions.
+ * 
+ * @method queryFieldParameters
+ * @return {Array} List of relevant field descriptions for the processor
+ */
 
 Sort.prototype.queryFieldParameters = function () {
 	return [{
