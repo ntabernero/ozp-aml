@@ -1,19 +1,25 @@
+// Module dependencies
+var ua = require('useragent');
+
 /**
  * MetricsCollector constructor.
  * 
  * @class MetricsCollector
  * @constructor
+ * @param {Object} db a MongoDB to use
+ * @param {Object} max the maximum length of the buffer (optional)
  */
-var MetricsCollector = function(db) {
+var MetricsCollector = function(db, max) {
     // Records buffer logs in batches
     this.buffer = [];
     this.metrics = db;
+    this.max = max || 100;
 };
 
 MetricsCollector.prototype = {
     buffer: null,
     metrics: null,
-    max: 4
+    max: null
 };
 
 MetricsCollector.prototype._mergeObjects = function () {
@@ -30,21 +36,27 @@ MetricsCollector.prototype._mergeObjects = function () {
  * 
  * @method put
  * @param {Object} req Express request object
- * @param {Object} input Additional input to collect
+ * @param {Object} metricsParameters Additional metrics to collect
  */
 MetricsCollector.prototype.put = function(req, metricsParameters) {
+    
+    var agent = ua.parse(req.headers['user-agent']);
     
     // Create the record
     var record = {
         ip: req.ip,
-        userAgent: req.headers['user-agent'],
-        query: req.query 
+        browser: agent.toAgent(),
+        xhr: req.xhr,
+        host: req.host,
+        contentType: req.get('Content-Type'),
+        params: req.route.params,
+        os: agent.os.toString()
     };
     
     var resultsObject = this._mergeObjects(record, metricsParameters);
     
     // If too long clean half of the buffer
-    if (this.buffer.length === 4) {
+    if (this.buffer.length === this.max) {
         this._cleanBuffer();
     }
     this.buffer.unshift(resultsObject);
