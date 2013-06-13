@@ -11,13 +11,14 @@ var TimingCollector = require('./TimingCollector');
  * @constructor
  */
 
-var RestControllerFactory = function(collectionName, database, recordUrl, debugging, mixins) {
+var RestControllerFactory = function(config, mixins) {
 	// Persist REST/collection options inside new object.
-	this.url = recordUrl;
-	this.debugging = debugging;
-	this.database = database;
-	this.collectionName = collectionName;
+	this.url = config.url;
+	this.debugging = config.debugging;
+	this.database = config.database;
+	this.collectionName = config.routeName;
 	this.timing = new TimingCollector();
+	this.injection = config.injection;
 	
 	if (typeof mixins === 'object') {
 		for (var mixin in mixins) {
@@ -106,15 +107,17 @@ RestControllerFactory.prototype.assignRouteMethods = function () {
  */
 
 RestControllerFactory.prototype.populateCollection = function () {
-	if (this.debugging) console.log('RestControllerFactory::populateCollection --> Injecting stub data for  \'' + this.collectionName + '\'');
-	try {
-		var injectionJson = require('../testData/injectable' + this._capitalizeFirstLetter(this.collectionName) + 'Records.json');
-		this.database.collection(this.collectionName, function(err, collection) {
-	        collection.insert(injectionJson.injectableRecords, {safe:true}, function(err, result) {});
-	    });
-	}
-	catch (exception) {
-		if (this.debugging) throw "Unable to load injection data for collection: " + exception;
+	if (this.injection) {
+		if (this.debugging) console.log('RestControllerFactory::populateCollection --> Injecting stub data for  \'' + this.collectionName + '\'');
+		try {
+			var injectionJson = require('../testData/' + this.injection);
+			this.database.collection(this.collectionName, function(err, collection) {
+		        collection.insert(injectionJson.injectableRecords, {safe:true}, function(err, result) {});
+		    });
+		}
+		catch (exception) {
+			if (this.debugging) throw "Unable to load injection data for collection: " + exception;
+		}
 	}
 };
 
