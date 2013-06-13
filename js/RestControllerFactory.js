@@ -178,6 +178,8 @@ RestControllerFactory.prototype.findAll = function (req, res) {
 
 	// Embedded timing parameter check.
 	timing.start();
+	var database = this.database;
+	var collectionName = this.collectionName;
 	
 	// Scan the collection.
     this.database.collection(this.collectionName, function(err, collection) {
@@ -209,20 +211,24 @@ RestControllerFactory.prototype.findAll = function (req, res) {
   			timingRecords = timing.stop(req);
 			metricsCollector.put(req, timingRecords);
 
-    		// Inject the record URLs for linking.
-        	var responseObject = {count: items.length, records: _injectRecordUrls(items)};
-        	if (operations.metadata.length > 0) {
-        		for (var i = 0; i < operations.metadata.length; i++) {
-        			responseObject = _mergeObjects(responseObject, operations.metadata[i]);
-        		}
-        	}
-        	if (req.query.hasOwnProperty('request_timing')) {
-    			if (req.query.request_timing.toLowerCase() === 'true') {
-    				responseObject = _mergeObjects(responseObject, {requestTiming: timingRecords});
-    			}
-    		}
-        	res.header("Access-Control-Allow-Origin", "*"); // CORS header, blanket white list.
-        	res.send(responseObject);
+			database.collection(collectionName, function(e, coll) {
+				coll.find().count(function (e, total) {
+					// Inject the record URLs for linking.
+		        	var responseObject = {count: items.length, total: total, records: _injectRecordUrls(items)};
+		        	if (operations.metadata.length > 0) {
+		        		for (var i = 0; i < operations.metadata.length; i++) {
+		        			responseObject = _mergeObjects(responseObject, operations.metadata[i]);
+		        		}
+		        	}
+		        	if (req.query.hasOwnProperty('request_timing')) {
+		    			if (req.query.request_timing.toLowerCase() === 'true') {
+		    				responseObject = _mergeObjects(responseObject, {requestTiming: timingRecords});
+		    			}
+		    		}
+		        	res.header("Access-Control-Allow-Origin", "*"); // CORS header, blanket white list.
+		        	res.send(responseObject);	
+				});
+			});
         });
     });
 };
