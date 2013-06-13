@@ -28,24 +28,31 @@ app.configure(function () {
 });
 
 // Assign routes and a route handler object.
-var routes = ['app', 'category', 'grouping', 'metrics'], routeHandlers = {}, idUrl = url + 'v' + version + '/';
+var routeConfig = require('../conf/routes.json'), routeHandlers = {}, idUrl = url + 'v' + version + '/';
 
 // Open the database.
 db.open(function (error) {
-	for (var i = 0; i < routes.length; i++) {
+	for (var i = 0; i < routeConfig.routes.length; i++) {
+		var routeConfigObject = routeConfig.routes[i];
 		// Assign the route handler object.
-		routeHandlers[routes[i]] = new RestControllerFactory(routes[i], db, idUrl, true, {
+		routeHandlers[routeConfigObject.name] = new RestControllerFactory({
+			routeName: routeConfigObject.name,
+			database: db,
+			url: idUrl,
+			debugging: true,
+			injection: routeConfigObject.data
+		},{
 			metricsCollector: new MetricsCollector(db),
 			queryProcessor: new QueryParameterProcessor(true)
 		});
 		
-		var scope = routeHandlers[routes[i]];
+		var scope = routeHandlers[routeConfigObject.name];
 		// Assign HTTP methods to route object methods.
-		app.get(idUrl		+ routes[i] + '/',		routeHandlers[routes[i]].findAll.bind(scope));
-		app.get(idUrl		+ routes[i] + '/:id',	routeHandlers[routes[i]].findById.bind(scope));
-		app.post(idUrl		+ routes[i] + '/',		routeHandlers[routes[i]].add.bind(scope));
-		app.put(idUrl		+ routes[i] + '/:id',	routeHandlers[routes[i]].update.bind(scope));
-		app.delete(idUrl	+ routes[i] + '/:id',	routeHandlers[routes[i]].remove.bind(scope));
+		app.get(idUrl		+ routeConfigObject.name + '/',		routeHandlers[routeConfigObject.name].findAll.bind(scope));
+		app.get(idUrl		+ routeConfigObject.name + '/:id',	routeHandlers[routeConfigObject.name].findById.bind(scope));
+		app.post(idUrl		+ routeConfigObject.name + '/',		routeHandlers[routeConfigObject.name].add.bind(scope));
+		app.put(idUrl		+ routeConfigObject.name + '/:id',	routeHandlers[routeConfigObject.name].update.bind(scope));
+		app.delete(idUrl	+ routeConfigObject.name + '/:id',	routeHandlers[routeConfigObject.name].remove.bind(scope));
 	}
 });
 
