@@ -7,6 +7,7 @@
     "express": "3.x",
     "mongodb": "1.x",
     "moment": "2.x",
-    "useragent": "~2.0.6"
+    "useragent": "~2.0.6",
+    "colorize": "~0.1.0"
   }
 }
