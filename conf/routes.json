@@ -1,0 +1,14 @@
+{
+	"routes":[{
+		"name": "app",
+		"data": "injectableAppRecords.json"
+	},{
+		"name": "category",
+		"data": "injectableCategoryRecords.json"
+	},{
+		"name": "grouping",
+		"data": "injectableGroupingRecords.json"
+	},{
+		"name": "metrics"
+	}]
+}
