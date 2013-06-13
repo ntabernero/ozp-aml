@@ -8,7 +8,7 @@ var express = require('express');
 var mongo = require('mongodb');
 
 // API URL and version.
-var url = '/aml/api/', version = 1;
+var versioning = require('../conf/version.json');
 
 // Create and connect to MongoDB database.
 var Server = mongo.Server, Db = mongo.Db;
@@ -28,7 +28,11 @@ app.configure(function () {
 });
 
 // Assign routes and a route handler object.
-var routeConfig = require('../conf/routes.json'), routeHandlers = {}, idUrl = url + 'v' + version + '/';
+var routeConfig = require('../conf/routes.json'),
+	idUrl = versioning.rest.url + 'v' + versioning.software.version + '/',
+	routeHandlers = {};
+
+console.log(idUrl);
 
 // Open the database.
 db.open(function (error) {
