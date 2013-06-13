@@ -13,8 +13,7 @@ var QueryParameterProcessor = function(debugging) {
 	this.debugging = debugging;
 	var processors = {
 		query: [],
-		metadata: [],
-		performance: []
+		metadata: []
 	};
 	
 	// Scan file system for parameter processors.
@@ -30,14 +29,14 @@ var QueryParameterProcessor = function(debugging) {
 			processors[folder].push(obj);
 		});
 	});
+	this.processors = processors;
 };
 
 QueryParameterProcessor.prototype = {
 	debugging: null,
 	processors: {
 		query: [],
-		metadata: [],
-		performance: []
+		metadata: []
 	}
 };
 
