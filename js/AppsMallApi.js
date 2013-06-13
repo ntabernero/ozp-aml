@@ -32,8 +32,6 @@ var routeConfig = require('../conf/routes.json'),
 	idUrl = versioning.rest.url + 'v' + versioning.software.version + '/',
 	routeHandlers = {};
 
-console.log(idUrl);
-
 // Open the database.
 db.open(function (error) {
 	for (var i = 0; i < routeConfig.routes.length; i++) {
