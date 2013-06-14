@@ -13,7 +13,7 @@ var versioning = require('../conf/version.json');
 // Create and connect to MongoDB database.
 var Server = mongo.Server, Db = mongo.Db;
 var server = new Server('localhost', 27017, {auto_reconnect: true});
-db = new Db('appsmall', server, {journal: true});
+var db = new Db('appsmall', server, {journal: true});
 
 // Kick start RESTful controller factory for collection-based routes.
 var RestControllerFactory = require('./RestControllerFactory');
