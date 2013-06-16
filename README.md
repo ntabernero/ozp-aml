@@ -17,7 +17,7 @@ Once you have the prerequisites and have cloned the code:
 2. Navigate to your MongoDB directory and run `./bin/mongod` to start the database.
 3. Back in the ozp-aml directory, run `node AppsMallApi` to start the REST API.
 4. Navigate to `localhost` using your favorite webserver to view the app.
-5. If you would like to hit the REST API directly, it is located at `localhost:3000/aml/api/v1/`.  There you can view the "app", "grouping", "category", and "metrics" collections. (Ex: `localhost:3000/aml/api/v1/app/grouping/`)
+5. If you would like to hit the REST API directly, it is located at `localhost:3000/aml/api/v1/`.  There you can view the "app", "grouping", "category", and "metrics" collections. (Ex: `localhost:3000/aml/api/v1/grouping/`)
 
 #### Utils
 You can also `cd util/` and run `node SSLCertGenerator` to generate random test certs.  This file takes command line arguments - see the file for more details.
