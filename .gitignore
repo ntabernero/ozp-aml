@@ -2,4 +2,4 @@
 /.project
 /.settings
 /conf/users.json
-/uril/certificateGeneration
+/util/certificateGeneration
