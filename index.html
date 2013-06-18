@@ -3,20 +3,19 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Applications Mall</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:light">
-		<link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-		<link href="lib/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+		<link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 		<link href="lib/responsiveslides/responsiveslides.css" rel="stylesheet">
-		<link href="css/aml.css" rel="stylesheet" media="screen">
+		<link href="css/aml.css" rel="stylesheet">
+		<link href="css/rslides.css" rel="stylesheet">
+
 	</head>
 	<body>
-		<div class="container fill">
-			<div class="row no-space">
-	  			<div class="span3 border main-panel fullheight">
-	  				<div>
-	  					<img src="img/apps_mall_logo.png"></img>
-	  				</div>
+		<div class="app">
+			<div id="left-spacer" class="spacer"></div>
+			<div id="aml" class="interface">
+	  			<div id="facets" class="facets">
+	  				<div><img src="img/apps_mall_logo.png"></img></div>
 	  				<div style="margin: 10px;">
 	  					<form class="form-search">
 	  						<input autofocus type="text" class="input-large" style="width: 95%;">
@@ -30,8 +29,8 @@
 						<ul id="auxillary"></ul>
 					</div>
 	  			</div>
-	  			<div class="span8 main-panel bottomless-border fullheight">
-		  			<div class="border-toolbar">
+	  			<div id="application-search" class="applications">
+		  			<div id="toolbar" class="toolbar">
 			  			<span class="lookfor-margin">Look for...</span>
 				  			<select>
 								<option value="mine">My Apps</option>
@@ -47,12 +46,12 @@
 			  				<li><img src="https://lh5.googleusercontent.com/Sm_XDONPTzHP3vgKhpEwzIG4ddhpgmHKxcx_XHGZdsHLpRLNcYdVhrrpYphwhdJL62MHK69TfQ=s700-h280-e365"></li>
 		  				</ul>
 		  			</div>
-		  			<div>
-		  				Listings
-		  			</div>
+		  			<div id="listings"></div>
 	  			</div>
 			</div>
+			<div id="right-spacer" class="spacer"></div>
 		</div>
+
 		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 		<script src="lib/bootstrap/js/bootstrap.min.js"></script>
 		<script src="lib/responsiveslides/responsiveslides.min.js"></script>
@@ -76,7 +75,7 @@
 		<script src="js/views/Grouping.js"></script>
 		
 		<script id="grouping-template" type="text/x-handlebars-template">
-  			<li><a class="nolink" href="{{url}}">{{grouping}}</li>
+  			<li><b><a class="nolink" href="{{url}}">{{grouping}}</b></li>
 		</script>
 		
 		<script id="category-template" type="text/x-handlebars-template">
