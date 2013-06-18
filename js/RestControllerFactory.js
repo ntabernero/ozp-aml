@@ -152,6 +152,13 @@ RestControllerFactory.prototype._injectRecordUrls = function (records) {
 	return injectedRecords;
 };
 
+/**
+ * Merges two Javascript objects together from arguments.
+ *
+ * @param {Array} arguments Arguments array to function declaration.
+ * @return {Object} Merged Javascript object.
+ */
+
 RestControllerFactory.prototype._mergeObjects = function () {
 	var o = {};
 	for (var i = arguments.length - 1; i >= 0; i --) {
@@ -180,7 +187,7 @@ RestControllerFactory.prototype.findAll = function (req, res) {
 	timing.start();
 	var database = this.database;
 	var collectionName = this.collectionName;
-	
+
 	// Scan the collection.
     this.database.collection(this.collectionName, function(err, collection) {
     	// Hijack the chained MongoDB operator method.
