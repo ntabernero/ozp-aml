@@ -1,72 +1,7 @@
 html, body {
-	font-family: 'Ubuntu' !important;
+	height: 100%;
 	font-size: 13px;
-}
-
-.main-panel {
-	background-color: #ececec;
-}
-
-.no-space [class*="span"] {
-    margin-left: 0;
-}
-
-.lookfor-margin {
-	margin: 5px 0px 0px 5px;
-}
-
-.border {
-	border: 1px solid #d3d3d3;
-}
-
-.border-toolbar {
-	border-top-style: solid;
-	border-right-style: none;
-	border-bottom-style: solid;
-	border-left-style: none;
-	border-color: #d3d3d3;
-	border-width: 1px;
-}
-
-.bottomless-border {
-	border-top-style: solid;
-	border-right-style: solid;
-	border-bottom-style: none;
-	border-left-style: none;
-	border-color: #d3d3d3;
-	border-width: 1px;
-}
-
-.rslides {
-	position: relative;
-	list-style: none;
-	overflow: hidden;
-	width: 100%;
-	padding: 0;
-	margin: 0;
-}
-
-.rslides li {
-	-webkit-backface-visibility: hidden;
-	position: absolute;
-	display: none;
-	width: 100%;
-	left: 0;
-	top: 0;
-}
-
-.rslides li:first-child {
-	position: relative;
-	display: block;
-	float: left;
-}
-
-.rslides img {
-	display: block;
-	height: auto;
-	float: left;
-	width: 100%;
-	border: 0;
+	font-family: 'Ubuntu' !important;
 }
 
 hr {
@@ -75,55 +10,70 @@ hr {
     box-shadow: inset 0 12px 12px -12px rgba(128,128,128,0.5);
 }
 
-.margins {
-	margin: 10px;
-}
-
-.center {
-     float: none;
-     margin-left: auto;
-     margin-right: auto;
-}
-
-/* CSS for fixed-fluid layout */
-
-.fixed {
-    width: 150px;  /* the fixed width required */
-    float: left;
-}
-
-.fixed + div {
-     margin-left: 150px;  /* must match the fixed width in the .fixed class */
-     overflow: hidden;
-}
-
-/* CSS to ensure sidebar and content are same height (optional) */
-
-html, body {
-    height: 100%;
-}
-
-.fill { 
-    min-height: 100%;
-    position: relative;
-}
-
-.filler:after{
-    background-color:inherit;
-    bottom: 0;
-    content: "";
-    height: auto;
-    min-height: 100%;
-    left: 0;
-    margin:inherit;
-    right: 0;
-    position: absolute;
-    top: 0;
-    width: inherit;
-    z-index: -1;  
-}
-
-.nofill a a:hover, a:visited, a:link, a:active {
+a a:hover, a:visited, a:link, a:active {
 	color: #000000;
 	text-decoration: none; 	
+}
+
+.app {
+	display: -webkit-box;   /* OLD: Safari,  iOS, Android browser, older WebKit browsers.  */
+	display: -moz-box;      /* OLD: Firefox (buggy) */ 
+	display: -ms-flexbox;   /* MID: IE 10 */
+	display: -webkit-flex;  /* NEW, Chrome 21+ */
+	display: flex;          /* NEW: Opera 12.1, Firefox 22+ */
+	-webkit-flex-flow: row nowrap;
+	-webkit-justify-content: center;
+	-webkit-align-content: stretch;
+	-webkit-align-items: stretch;
+}
+
+.app div.spacer {
+	-webkit-flex: 2 1 auto;
+	-webkit-align-self: auto;
+	min-width: 0px;
+	min-height: auto;
+}
+
+.app div.interface {
+	-webkit-flex: 1 1 auto;
+	-webkit-align-self: auto;
+	min-width: 0px;
+	min-height: auto;
+	background-color: #ececec;
+}
+
+.app div.interface {
+	display: -ms-inline-flexbox;   /* MID: IE 10 */
+	display: -webkit-inline-flex;  /* NEW, Chrome 21+ */
+	display: inline-flex;          /* NEW: Opera 12.1, Firefox 22+ */
+}
+
+.app div.interface div.facets {
+	-webkit-flex: 1 1 auto;
+	-webkit-align-self: auto;
+	max-width: 250px;
+	min-height: auto;
+	border-top-style: solid;
+	border-right-style: none;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border: 1px solid #d3d3d3;
+	background-color: #ececec;
+}
+
+.app div.interface div.applications {
+	-webkit-flex: 2 1 auto;
+	-webkit-align-self: auto;
+	min-width: 0px;
+	min-height: auto;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: none;
+	border-left-style: solid;
+	border: 1px solid #d3d3d3;
+	background-color: #ececec;
+}
+
+.lookfor-margin {
+	margin: 5px 0px 0px 5px;
 }
